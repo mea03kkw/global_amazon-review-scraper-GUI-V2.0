@@ -45,9 +45,11 @@ A user-friendly graphical interface for the Amazon Review Scraper, built with Tk
    ```
 
 3. **Set up Amazon credentials (Optional but recommended)**
-   - Copy the `.env` file from the parent directory or create one
-   - Edit with your Amazon credentials:
+   - Copy `.env.example` to `.env`
+   - Edit `.env` with your Amazon credentials:
    ```bash
+   cp .env.example .env
+   # Then edit .env with your credentials
    AMAZON_EMAIL=your_email@example.com
    AMAZON_PASSWORD=your_password_here
    ```
@@ -122,16 +124,20 @@ python gui_app.py
 The GUI version uses the same credential system as the CLI version:
 
 ### Automatic Setup
-- Credentials are loaded from `.env` file in the parent directory
+- Credentials are loaded from `.env` file in the project directory
 - If no credentials found, you'll be prompted to set them up
 
 ### Manual Setup
-Create a `.env` file in the `amazon-scraper-gui` directory:
-```bash
-# Amazon Credentials
-AMAZON_EMAIL=your_email@example.com
-AMAZON_PASSWORD=your_password_here
-```
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Edit `.env` with your actual Amazon credentials:
+   ```bash
+   # Amazon Credentials
+   AMAZON_EMAIL=your_email@example.com
+   AMAZON_PASSWORD=your_password_here
+   ```
 
 ## 📊 Output Format
 
