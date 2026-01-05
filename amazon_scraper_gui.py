@@ -156,12 +156,21 @@ class AmazonScraperGUI:
 
         # Handle "Continue shopping" button if present (sometimes Amazon shows this before login)
         try:
-            continue_button = self.driver.find_element(By.CSS_SELECTOR, AmazonSelectors.CONTINUE_SHOPPING_BUTTON)
-            continue_button.click()
-            time.sleep(ScrapingConfig.get_interaction_delay())
-            self.update_gui('status', 'Clicked "Continue shopping" button')
-        except NoSuchElementException:
-            pass  # Button not present, continue normally
+            # Wait up to 5 seconds for continue shopping buttons to appear
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'button.a-button-text[type="submit"]'))
+            )
+            buttons = self.driver.find_elements(By.CSS_SELECTOR, 'button.a-button-text[type="submit"]')
+            for button in buttons:
+                if button.is_displayed() and button.is_enabled():
+                    button_text = button.text.strip() or button.get_attribute('alt')
+                    if button_text in AmazonSelectors.CONTINUE_SHOPPING_TEXTS:
+                        button.click()
+                        time.sleep(ScrapingConfig.get_interaction_delay())
+                        self.update_gui('status', f'Clicked continue shopping button: {button_text}')
+                        break
+        except:
+            pass  # No button or timeout, continue normally
 
     def _check_for_blocking_pages(self, product_info):
         """Check if page is blocked by login or CAPTCHA"""
@@ -465,13 +474,22 @@ class AmazonScraperGUI:
             time.sleep(ScrapingConfig.get_page_load_delay())
 
             # Handle "Continue shopping" button if present on home page
+            continue_clicked = False
             try:
-                continue_button = self.driver.find_element(By.CSS_SELECTOR, AmazonSelectors.CONTINUE_SHOPPING_BUTTON)
-                continue_button.click()
-                time.sleep(ScrapingConfig.get_interaction_delay())
-                self.update_gui('status', 'Clicked "Continue shopping" button on home page')
+                buttons = self.driver.find_elements(By.CSS_SELECTOR, 'button.a-button-text[type="submit"]')
+                for button in buttons:
+                    if button.is_displayed() and button.is_enabled():
+                        button_text = button.text.strip() or button.get_attribute('alt')
+                        if button_text in AmazonSelectors.CONTINUE_SHOPPING_TEXTS:
+                            button.click()
+                            time.sleep(ScrapingConfig.get_interaction_delay())
+                            self.update_gui('status', f'Clicked continue shopping button on home page: {button_text}')
+                            continue_clicked = True
+                            break
             except NoSuchElementException:
-                pass  # Button not present, continue normally
+                pass
+            if not continue_clicked:
+                pass  # No button found, continue normally
 
             # Find and use the search box
             try:

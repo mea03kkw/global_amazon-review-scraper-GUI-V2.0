@@ -132,7 +132,12 @@ class AmazonSelectors:
     ]
 
     # Navigation selectors
-    CONTINUE_SHOPPING_BUTTON = 'button[alt="Continue shopping"]'
+    CONTINUE_SHOPPING_TEXTS = [
+        "Continue shopping",  # Australia/English
+        "Doorgaan met winkelen",  # Netherlands
+        "ショッピングを続ける",  # Japan
+        "Weiter shoppen"  # Germany
+    ]
     SEARCH_BOX_SELECTORS = ['input[name="field-keywords"], #twotabsearchtextbox']
     NEXT_PAGE_BUTTON_SELECTORS = [
         'li.a-last a',
